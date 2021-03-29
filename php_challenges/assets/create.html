@@ -1,0 +1,25 @@
+{% extends "admin/challenges/create.html" %}
+{% block category %}
+<div class="form-group">
+    <label>
+        Category:<br>
+        <small class="form-text text-muted">
+            The category of your challenge
+        </small>
+    </label>
+    <input type="text" class="form-control" name="category" placeholder="Enter challenge category">
+</div>
+<div class="form-group">
+    <label for="php_zip_folder" id='php_zip_folder_label'>Php folder :
+      <small class="form-text text-muted">
+          Zip folder containing your php pages chall
+      </small>
+    </label>
+    <input type ="file" class="form-control" name = "zip" id = "zip">
+
+</div>
+{% endblock %}
+{% block type %}
+<input type="hidden" name = "zip_file" value="" id = "phpfile">
+<input type="hidden" name="type" value="php" id="chaltype">
+{% endblock %}

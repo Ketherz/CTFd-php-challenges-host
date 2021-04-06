@@ -9,6 +9,41 @@ from werkzeug.utils import secure_filename
 import base64
 import requests
 import zipfile
+import docker
+
+
+
+
+
+#Aprés la création des différents fichiers, il est necessaire de relancer les containers
+#On supprime les anciennes images on rebuild grace au dockerfile et on relance le tout
+
+def reload_docker() :
+
+    try :
+        client = docker.from_env()
+
+        image_name = "yann/merged_php_chall:latest"
+        arg = {"ancestor" : image_name}
+
+        if(client.containers.list(filters = arg, all = True) != []) :
+            for i in client.containers.list(arg) :
+                i.remove(force = True)
+
+        if(client.images.list("yann/merged_php_chall") != []) :
+            client.images.remove(image = "yann/merged_php_chall:latest")
+
+            image, image_status = client.images.build(path = "CTFd/plugins/php_challenges/", dockerfile = "dockerfile/merge-phpchall.dockerfile")
+            image.tag("yann/merged_php_chall", "latest")
+            client.containers.run('yann/merged_php_chall', detach = True, ports = {'80/tcp' : 4001}, restart_policy = {"Name" : "unless-stopped"})
+
+    except Exception as e :
+        print(e)
+        print("IMPORTANT : DOCKER CREATION FAILED")
+
+
+
+
 
 #création de la classe de challenge php
 class PhpChallengeType(BaseChallenge):
@@ -27,11 +62,11 @@ class PhpChallengeType(BaseChallenge):
     route = '/plugins/php_challenges/assets'
     blueprint = Blueprint('php_challenges', __name__, template_folder='templates', static_folder='assets')
 
-
-
     #Create is used to create the challenge (bd add and php file add)
+    # TODO: Ajouter les liens dans la description de façon programmatique (comment ? aucune idée mdr en tout cas pour le moment)
     @staticmethod
     def create(request):
+
         """
         This method is used to process the challenge creation request.
 
@@ -54,7 +89,25 @@ class PhpChallengeType(BaseChallenge):
             zip_ref.extractall("CTFd/plugins/php_challenges/challenges_to_add/")
             os.remove("CTFd/plugins/php_challenges/challenges_to_add/" + str(challenge.id) + ".zip")
 
+        reload_docker()
+
         return challenge
+
+
+    @staticmethod
+    def update(challenge, request):
+        data = request.form or request.get_json()
+        for attr, value in data.items():
+            setattr(challenge, attr, value)
+        db.session.commit()
+        if request.get_json()["state"] == "visible" :
+            print("TODO : déplacer les fichiers php ")
+
+        if request.get_json()["state"] == "hidden" :
+            print("TODO : déplacer les fichiers php")
+
+        return challenge
+
 
 
 
@@ -67,6 +120,6 @@ class PhpChallenge(Challenges):
 
 
 def load(app) :
-    #app.db.create_all()
+    app.db.create_all()
     CHALLENGE_CLASSES['php'] = PhpChallengeType
     register_plugin_assets_directory(app, base_path='/plugins/php_challenges/assets/')

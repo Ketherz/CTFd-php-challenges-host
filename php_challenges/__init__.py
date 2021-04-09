@@ -39,7 +39,9 @@ def reload_docker() :
 
     except Exception as e :
         print(e)
-        print("IMPORTANT : DOCKER CREATION FAILED")
+        print("<============================================================================>")
+        print("<====================>IMPORTANT : DOCKER CREATION FAILED<====================>")
+        print("<============================================================================>")
 
 
 
@@ -63,7 +65,7 @@ class PhpChallengeType(BaseChallenge):
     blueprint = Blueprint('php_challenges', __name__, template_folder='templates', static_folder='assets')
 
     #Create is used to create the challenge (bd add and php file add)
-    # TODO: Ajouter les liens dans la description de façon programmatique (comment ? aucune idée mdr en tout cas pour le moment)
+    # TODO: ADD link tho the webpage into the description (idk how to do it for now since the IP change everytime and sometime need to add public or local ip)
     @staticmethod
     def create(request):
 
@@ -101,10 +103,10 @@ class PhpChallengeType(BaseChallenge):
             setattr(challenge, attr, value)
         db.session.commit()
         if request.get_json()["state"] == "visible" :
-            print("TODO : déplacer les fichiers php ")
+            print("TODO : Move php folder to the visible folder")
 
         if request.get_json()["state"] == "hidden" :
-            print("TODO : déplacer les fichiers php")
+            print("TODO : Move php folder to the hidden folder")
 
         return challenge
 

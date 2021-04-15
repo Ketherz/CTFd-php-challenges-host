@@ -28,10 +28,10 @@ The creator is quite the same, but you can add a zip folder containing the php c
 challenge.zip
 |
 |-_challenge
-|
-|-helloworld.php
-|-style.css
-|-flag.php
+  |
+  |-helloworld.php
+  |-style.css
+  |-flag.php
 ```
 
 

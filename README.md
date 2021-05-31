@@ -1,7 +1,7 @@
 # CTFd-Upload-php-and-update-dockerfile
 
 This little project aim to give an easy upload of php challenges in CTFd. A docker with apache2 run in background and store the files.
-But, take care, no challenges that lead to a docker takeover should be added it's designed to just add challenges that do not need machine compromisation like login bypass xss or that kind of stuff.
+But, take care, no challenges that lead to a docker takeover should be added it's designed to just add challenges that do not need machine full take-over of the machine like login bypass xss or that kind of stuff.
 
 ## Installation :
 
